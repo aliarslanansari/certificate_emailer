@@ -76,4 +76,49 @@ var workbook = new Excel.Workbook();
     //     }
     //     alert(res);
     // }
+    document.getElementById('lockbutton').onclick = function() {
+        console.log(document.getElementsByName('sel_em[]')[1].checked);
+        var lock = document.getElementById('locklayer');
+        var selectall = document.getElementById('select-all');
+        var deselectall = document.getElementById('de-select-all');
+        var excel_div = document.getElementById('excel-div');
+        if(lock.classList.contains('d-none')){
+            excel_div.classList.add('unscrollable');
+            excel_div.classList.remove('scrollable');
+            lock.classList.remove('d-none');
+            selectall.classList.add('d-none');
+            deselectall.classList.add('d-none');
+            this.innerText = 'Unlock';
+        }else{
+            excel_div.classList.remove('unscrollable');
+            excel_div.classList.add('scrollable');
+            lock.classList.add('d-none');
+            selectall.classList.remove('d-none');
+            deselectall.classList.remove('d-none');
+            this.innerText = 'Lock';
+        }
+    }
+    var myFunc = function(evt) {
+        var checkbox = document.getElementsByName('sel_em[]')[evt.currentTarget.index_no];
+        checkbox.checked = checkbox.checked? false:true;
+    }
+    ipcRenderer.on('openexcel',function(){
+        document.querySelector("#excel_file").click();
+    })
+
+    ipcRenderer.on('email_status',function(e,item){
+        if(item.rowNumber == rowCount){
+            loadingSpinner(false);
+        }
+        var row = document.getElementsByName('rows[]')[item.rowNumber-1];
+        if(item.status){
+            row.classList.add('greenbg');
+        }else{
+            console.log(item.status,item.rowNumber);
+            console.log(item);
+            row.classList.add('redbg');
+        }
+    })
     
+    // loadingSpinner(true);
+    //setTimeout(loadingSpinner,1000,false);
