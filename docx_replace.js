@@ -14,6 +14,7 @@ function replaceErrors(key, value) {
     }
     return value;
 }
+
 function errorHandler(error) {
     console.log(JSON.stringify({error: error}, replaceErrors));
 
@@ -27,6 +28,7 @@ function errorHandler(error) {
     }
     throw error;
 }
+
 //Load the docx file as a binary
 var content = fs
     .readFileSync(path.resolve(__dirname, '/home/ali/Desktop/Untitled 1.docx'), 'binary');
