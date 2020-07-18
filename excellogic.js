@@ -55,3 +55,25 @@ var workbook = new Excel.Workbook();
             });  
         });
     }
+
+    document.getElementById('select-all').onclick = function() {
+        var checkboxes = document.getElementsByName('sel_em[]');
+        for (var checkbox of checkboxes) {
+          checkbox.checked = true;
+        }
+    }
+    document.getElementById('de-select-all').onclick = function() {
+        var checkboxes = document.getElementsByName('sel_em[]');
+        for (var checkbox of checkboxes) {
+          checkbox.checked = false;
+        }
+    }
+    // document.getElementById('subcheck').onclick = function() {
+    //     var checkboxes = document.getElementsByName('sel_em[]');
+    //     var res = [];
+    //     for(let checkbox of checkboxes){
+    //         res.push(checkbox.checked);
+    //     }
+    //     alert(res);
+    // }
+    
