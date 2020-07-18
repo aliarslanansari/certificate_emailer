@@ -107,3 +107,35 @@ if(process.env.NODE_ENV !== "production"){
         ]
     })
 }
+function sendEmail(email_host, host_port, email_id, password, subject, to_email,text,rowNumber){
+    let transport = nodemailer.createTransport({
+        host: email_host,
+        port: host_port,
+        auth: {
+           user: email_id,
+           pass: password
+        }
+    });
+    const message = {
+        from:email_id,
+        to: to_email,
+        subject: subject,
+        text: text
+    };
+    transport.sendMail(message, function(err, info){
+        if (err) {
+            console.log(err);
+            console.log(err.code);
+            var item = {'rowNumber':rowNumber,'status':0,'message':'Something gone wrong'};
+            if(err.response){
+                item.response = err.response;
+            }
+            mainWindow.webContents.send('email_status',item);
+        } else {
+            info.rowNumber = rowNumber;
+            info.status = '1';
+            console.log(info);
+            mainWindow.webContents.send('email_status',info);
+        }
+    });
+}   
