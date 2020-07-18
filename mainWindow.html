@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- <link rel="stylesheet" href="./css/materialize.min.css"> -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Mail Sender</title>
+    <link rel="stylesheet" href="tooltip.css">
+    <link rel="stylesheet" href="./css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="./js/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    
+</head>
+<body>
+  <nav class="navbar navbar-dark bg-info">
+    <a class="navbar-brand" href="#">Bulk Mail Sender</a>
+  </nav>
+    <form id="listform" style="width: 20%;min-width: 320px;align-items: flex-end; margin-left:2.5%; margin-top: 10px; margin-bottom:10px;height: 10%;">
+        <div class = "row">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Upload</span>
+            </div>
+            <div class="custom-file">
+              <input type="file" accept=".xlsx" multiple='false' class="custom-file-input" id="excel_file"s">
+              <label class="custom-file-label" for="excel_file">Choose an Excel File</label>
+            </div>
+          </div>
+         </div>
+    </form>
+    <div class="loader d-none" id='spinner'style="right: 2%; top:70px; position: absolute;"></div>
+    <div 
+      style="margin: auto;position:relative; max-width: 95%; min-width:95%;max-height: 40%; border: 1px solid black; margin-bottom: 15px;" 
+      id='excel-div' 
+      class="d-none scrollable">
+        <table class="table">
+          <form id='checkform' class="checkform">
+            <tbody id="excel_table">
+            </tbody>
+          </form>
+          </table>
+          <div 
+            id='locklayer'
+            style="right:0%;left:0%;display:flex;z-index:3;position:sticky;background-color:rgb(200, 200, 200);opacity: 0.3;bottom:0%;"
+            class="d-none">
+            <div style="height:500px; width:100%;"></div>
+            <img src="./assets/images/480px-Ei-lock.svg.png" 
+              style=" position:sticky; margin: auto; justify-self:center; right: 45%;left: 45%;; bottom: 10%;width: 10%; top: 10%;" >
+          </div>
+    </div>
+
+    <div style="margin: 0 2.5%;" id='buttons' class="d-none">
+      <div class="row">
+        <div class="input-field col-6">
+          <button class="btn btn-info" id='select-all'>Check All</button>
+          <button class="btn btn-info" id='de-select-all'>Uncheck All</button>
+          <!-- <button class="btn btn-info" id='subcheck'>Submit Checkbox</button> -->
+        </div><!-- < This was missing -->
+          <div class="input-field col-6">
+            <button class="btn btn-warning" id='lockbutton' style="position: absolute; right:2.5%;">Lock</button>
+          </div>
+      </div>
+  </div>
+    </div>
+
+    <form id='emailform'>
+      <div class="row" style="width: 95%; max-width: 700px; bottom: 0; position: absolute; right:2%; height: 29%;">
+        <div class="input-field col-6" data-tip="Example: smtp.gmail.com">
+            <input id="email_host" type="text" class="form-control" required value="smtp.gmail.com">
+            <label for="email_host">Email Host</label>
+        </div>
+        <div class="input-field col-6">
+          <input id="host_port" type="number" class="form-control"  value="465" required>
+          <label for="host_port">Host Port</label>
+        </div>
+        <div class="input-field col-6">
+          <input id="email_id" type="email" class="form-control" required value='aliarslan1620@gmail.com'>
+          <label for="email_id">Sender Email ID</label>
+        </div>
+        <div class="input-field col-6">
+          <select class="custom-select" id='email_column_sel' disabled>
+            <option selected disabled>Choose...</option>
+          </select>
+          <label for="email_column_sel">Select email column name</label>
+        </div>
+        
+        <div class="input-field col s2">
+            <input id="sender_password" type="password" class="form-control"required value=''>
+            <label for="sender_password">Password</label>
+          </div>
+          <div class="input-field col s6">
+            <input id="email_subject" type="text" class="form-control" required value='hello'>
+              <label for="email_subject">Email Subject</label>
+            </div>
+            <div class="input-field col s8">
+              <input id="email_text" type="text" class="form-control" required value='Testing'>
+                <label for="email_text">Text</label>
+              </div>
+            <div class="input-field col s4">
+              <input id="email_submit" value='Send Email' type="submit" class="btn btn-info">
+              </div>
+      </div>
+    </form>
+        <div class="btn btn-success netConnect"
+            id='netCheck'
+            style="top: 0; right: 1%; position: absolute; margin-left: 10px; border-bottom-right-radius:20px;border-bottom-left-radius:20px;pointer-events: none;">
+            Internet Disconnected
+        </div>
+    <button 
+      style="position:absolute; bottom:1%; left:2%"
+      onclick="resetEverything()"
+      class='btn-danger btn'>Reset Everything</button>
+
+          
+
+
+</body>
+<script>
+  function resetEverything(){
+    document.querySelector('#excel-div').classList.add("d-none");
+    document.querySelector('#buttons').classList.add("d-none");
+    document.getElementById('email_column_sel').value = null;
+    document.querySelector('#excel_file').value = null;
+    document.querySelector('#email_host').value = null;
+    document.querySelector('#host_port').value = null;
+    document.querySelector('#email_id').value = null;
+    document.querySelector('#sender_password').value = null;
+    document.querySelector('#email_subject').value = null;
+    document.querySelector('#email_text').value = null;
+  }
+  var loadingSpinner = function(isLoading){
+        var loader = document.getElementById('spinner');
+        if(isLoading){
+            loader.classList.remove('d-none');
+        }else{
+            loader.classList.add('d-none');
+        }
+    }
+  var rowCount = 0;
+  var rowValHeader = [];
+    setInterval(()=>{
+        isOnline();
+    },3500);
+    function isOnline() { 
+      checkButton = document.getElementById('netCheck');
+      fetch('https://ali-arslan-ansari.000webhostapp.com/checknet.php')
+      .then(data => {
+          checkButton.innerText = "Internet Connected";
+          checkButton.classList.remove("netConnect");
+       }).catch(error => {
+          checkButton.innerText = "Internet Disconnected";
+          checkButton.classList.add("netConnect");
+        });
+    }
+</script>
+<script>
+  const { ipcRenderer } = require('electron');
+  const form = document.querySelector("#emailform");
+  form.addEventListener('submit',sendEmail);
+  const host = document.querySelector('#email_host');
+  const port = document.querySelector('#host_port');
+  const email = document.querySelector('#email_id');
+  const pass = document.querySelector('#sender_password');
+  const subject = document.querySelector('#email_subject');
+  const text = document.querySelector('#email_text');
+  function sendEmail(e){
+    loadingSpinner(true);
+      var checkboxes = document.getElementsByName('sel_em[]');
+      var res = [];
+      for(let checkbox of checkboxes){
+        res.push(checkbox.checked);
+      }
+      e.preventDefault();
+      var item = {
+        host : host.value,
+        port : port.value,
+        email: email.value,
+        pass : pass.value,
+        subject:subject.value,
+        email_array: res,
+        text:text.value,  
+        excel_path:document.querySelector('#excel_file').files[0].path,
+        emailHeader: document.getElementById('email_column_sel').value
+      }
+      if(item){
+          ipcRenderer.send('send_email', item);
+      }else{
+        item = null;
+      }
+  }
+</script>
+<script src="TitleBar.js"></script>
+<!-- <script src="./js/materialize.min.js"></script> -->
+<script type="module" src="excellogic.js"> </script>
+<script src="./js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</html>
