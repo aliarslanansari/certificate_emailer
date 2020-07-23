@@ -197,6 +197,7 @@
     document.querySelector('#host_port').value = null;
     document.querySelector('#email_id').value = null;
     document.querySelector('#sender_password').value = null;
+    document.querySelector('#htmltext').value = null;
     document.querySelector('#email_subject').value = null;
     document.querySelector('#email_text').value = null;
   }
@@ -259,7 +260,8 @@
         email_array: res,
         text:text.value,  
         excel_path:document.querySelector('#excel_file').files[0].path,
-        emailHeader: document.getElementById('email_column_sel').value
+        emailHeader: document.getElementById('email_column_sel').value,
+        htmltext: document.getElementById('htmltext').value
       }
       if(item){
           ipcRenderer.send('send_email', item);

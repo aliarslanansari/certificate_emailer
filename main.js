@@ -86,7 +86,7 @@ ipcMain.on('send_email',function(e,item){
                 return;
             }
             console.log(row.values[item.emailHeader]);
-            sendEmail(item.host, item.port, item.email, item.pass, item.subject,row.values[item.emailHeader],item.text,rowNumber);
+            sendEmail(item.host, item.port, item.email, item.pass, item.subject,row.values[item.emailHeader],item.text,item.htmltext,rowNumber);
         })
     })
     .catch((err)=>{console.log(err)});
@@ -143,7 +143,7 @@ if(process.env.NODE_ENV !== "production"){
         ]
     })
 }
-async function sendEmail(email_host, host_port, email_id, password, subject, to_email,text,rowNumber){
+async function sendEmail(email_host, host_port, email_id, password, subject, to_email,text,htmltext,rowNumber){
     let transport = nodemailer.createTransport({
         host: email_host,
         port: host_port,
@@ -152,7 +152,13 @@ async function sendEmail(email_host, host_port, email_id, password, subject, to_
            pass: password
         }
     });
-    const message = { from:email_id, to: to_email, subject: subject, text: text };
+    const message = { 
+        from:email_id, 
+        to: to_email, 
+        subject: subject, 
+        text: text,
+        html:htmltext
+    };
     return new Promise(function (resolve, reject){
         transport.sendMail(message, function(err, info){
             if (err) {
