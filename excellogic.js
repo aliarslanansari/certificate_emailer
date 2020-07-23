@@ -107,16 +107,21 @@ var workbook = new Excel.Workbook();
     })
 
     ipcRenderer.on('email_status',function(e,item){
-        if(item.rowNumber == rowCount){
+        rowCount1++;
+        console.log(rowCount,rowCount1);
+        if(rowCount1 == rowCount-1){
             loadingSpinner(false);
         }
         var row = document.getElementsByName('rows[]')[item.rowNumber-1];
         if(item.status){
             row.classList.add('greenbg');
-        }else{
+            row.classList.remove('redbg');
+
+        }else{  
             console.log(item.status,item.rowNumber);
             console.log(item);
             row.classList.add('redbg');
+            row.classList.remove('greenbg');
         }
     })
     

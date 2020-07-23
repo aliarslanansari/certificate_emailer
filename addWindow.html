@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add Shopping List Item</title>
+    <link rel="stylesheet" href="./css/materialize.min.css">
+    <style>
+        body {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="listform">
+            <div class = "row">
+                <label>Upload Excel File</label>
+                <div class = "file-field input-field">
+                   <div class = "btn">
+                      <span>Browse</span>
+                      <input type = "file" id="excel_file"/>
+                   </div>
+                   
+                   <div class = "file-path-wrapper">
+                      <input class = "file-path validate" type = "text"
+                         placeholder = "Upload file" />
+                   </div>
+                </div>
+             </div>
+
+            <button type='submit' class="waves-effect waves-light btn">Upload File</button>
+        </form>
+    </div>
+    <script>
+        const electron = require('electron');
+        const {ipcRenderer} = electron;
+        console.log("ADD");
+        const form = document.querySelector("#listform");
+        form.addEventListener('submit',submitForm);
+
+        function submitForm(e){
+            e.preventDefault();
+            const item = document.querySelector('#excel_file').files[0].path;
+            if(item.trim()!=""){
+                ipcRenderer.send('item:add', item);
+            }else{
+                document.querySelector('#item').value = '';
+                document.querySelector('#item').focus();
+            }
+        }
+    </script>
+    <script src="./js/materialize.min.js"></script>
+    <script>
+        // 1. Require the installed module
+        const customTitlebar = require('custom-electron-titlebar');
+    
+        // 2. Create the custom titlebar with your own settings
+        //    To make it work, we just need to provide the backgroundColor property
+        //    Other properties are optional.
+        let MyTitleBar = new customTitlebar.Titlebar({
+            backgroundColor: customTitlebar.Color.fromHex('#444'),
+            shadow: true,
+            icon: './assets/icons/png/icon.png',
+            minimizable: false,
+            maximizable: false,
+            drag:false,
+            menu:null
+        });
+        
+        // 3. Update Titlebar text
+        MyTitleBar.updateTitle('Add Item');
+    </script>
+</body>
+</html>

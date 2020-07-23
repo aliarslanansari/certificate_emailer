@@ -46,7 +46,7 @@ app.on('ready',function(){
 //Catch item:add
 ipcMain.on('send_email',function(e,item){
     var ws;
-    //console.log(item);
+    console.log(item);
     var workbook = new Excel.Workbook();
     workbook.xlsx.readFile(item.excel_path)
     .then(function(){
@@ -54,7 +54,13 @@ ipcMain.on('send_email',function(e,item){
         var cell = ws.getCell('A1').value;
         //console.log(cell);
         ws.eachRow(function(row, rowNumber) {
+            console.log(item.email_array[rowNumber-2]);
             if(rowNumber==1){
+                return;
+            }
+            if(!item.email_array[rowNumber-2]){
+                var info = {'rowNumber':rowNumber,'status':0,'message':'Row not selected'};
+                mainWindow.webContents.send('email_status',info);    
                 return;
             }
             console.log(row.values[item.emailHeader]);
@@ -107,7 +113,7 @@ if(process.env.NODE_ENV !== "production"){
         ]
     })
 }
-function sendEmail(email_host, host_port, email_id, password, subject, to_email,text,rowNumber){
+async function sendEmail(email_host, host_port, email_id, password, subject, to_email,text,rowNumber){
     let transport = nodemailer.createTransport({
         host: email_host,
         port: host_port,
@@ -116,26 +122,23 @@ function sendEmail(email_host, host_port, email_id, password, subject, to_email,
            pass: password
         }
     });
-    const message = {
-        from:email_id,
-        to: to_email,
-        subject: subject,
-        text: text
-    };
-    transport.sendMail(message, function(err, info){
-        if (err) {
-            console.log(err);
-            console.log(err.code);
-            var item = {'rowNumber':rowNumber,'status':0,'message':'Something gone wrong'};
-            if(err.response){
-                item.response = err.response;
+    const message = { from:email_id, to: to_email, subject: subject, text: text };
+    return new Promise(function (resolve, reject){
+        transport.sendMail(message, function(err, info){
+            if (err) {
+                console.log(err);
+                console.log(err.code);
+                var item = {'rowNumber':rowNumber,'status':0,'message':'Something gone wrong'};
+                if(err.response){
+                    item.response = err.response;
+                }
+                mainWindow.webContents.send('email_status',item);
+            } else {
+                info.rowNumber = rowNumber;
+                info.status = '1';
+                console.log(info);
+                mainWindow.webContents.send('email_status',info);
             }
-            mainWindow.webContents.send('email_status',item);
-        } else {
-            info.rowNumber = rowNumber;
-            info.status = '1';
-            console.log(info);
-            mainWindow.webContents.send('email_status',info);
-        }
-    });
+        });
+     });
 }   
