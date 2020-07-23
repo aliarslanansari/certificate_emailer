@@ -116,42 +116,56 @@
   </div>
     </div>
 
-    <form id='emailform'>
-      <div class="row" style="width: 95%; max-width: 700px; bottom: 0; position: absolute; right:2%; height: 29%;">
-        <div class="input-field col-6" data-tip="Example: smtp.gmail.com">
-            <input id="email_host" type="text" class="form-control" required value="smtp.gmail.com">
-            <label for="email_host">Email Host</label>
-        </div>
-        <div class="input-field col-6">
-          <input id="host_port" type="number" class="form-control"  value="465" required>
-          <label for="host_port">Host Port</label>
-        </div>
-        <div class="input-field col-6">
-          <input id="email_id" type="email" class="form-control" required value='aliarslan1620@gmail.com'>
-          <label for="email_id">Sender Email ID</label>
-        </div>
-        <div class="input-field col-6">
-          <select class="custom-select" id='email_column_sel' disabled>
-            <option selected disabled>Choose...</option>
-          </select>
-          <label for="email_column_sel">Select email column name</label>
-        </div>
-        
-        <div class="input-field col s2">
-            <input id="sender_password" type="password" class="form-control"required value=''>
-            <label for="sender_password">Password</label>
-          </div>
-          <div class="input-field col s6">
-            <input id="email_subject" type="text" class="form-control" required value='hello'>
-              <label for="email_subject">Email Subject</label>
+    <form id='emailform' style="width: 95%; max-width: 1500px; bottom: 0; position: absolute; right:2%; height: 29%;">
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="form-group col-12">
+              <textarea class="form-control" id="htmltext" style="resize: none; height:180px"></textarea>
+              <label for="exampleFormControlTextarea1">Add HTML Code Here</label>
             </div>
-            <div class="input-field col s8">
-              <input id="email_text" type="text" class="form-control" required value='Testing'>
-                <label for="email_text">Text</label>
-              </div>
             <div class="input-field col s4">
-              <input id="email_submit" value='Send Email' type="submit" class="btn btn-info">
+              <button type="button" formnovalidate class="btn btn-info" onclick="htmlPreview()">HTML Preview</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="row">
+            <div class="input-field col-6" data-tip="Example: smtp.gmail.com">
+                <input id="email_host" type="text" class="form-control" required value="smtp.gmail.com">
+                <label for="email_host">Email Host</label>
+            </div>
+            <div class="input-field col-6">
+              <input id="host_port" type="number" class="form-control"  value="465" required>
+              <label for="host_port">Host Port</label>
+            </div>
+            <div class="input-field col-6">
+              <input id="email_id" type="email" class="form-control" required value='aliarslan1620@gmail.com'>
+              <label for="email_id">Sender Email ID</label>
+            </div>
+            <div class="input-field col-6">
+              <select class="custom-select" id='email_column_sel' disabled>
+                <option selected disabled>Choose...</option>
+              </select>
+              <label for="email_column_sel">Select email column name</label>
+            </div>
+            <div class="input-field col s2">
+                <input id="sender_password" type="password" class="form-control"required value=''>
+                <label for="sender_password">Password</label>
               </div>
+              <div class="input-field col s6">
+                <input id="email_subject" type="text" class="form-control" required value='hello'>
+                  <label for="email_subject">Email Subject</label>
+                </div>
+                <div class="input-field col s8">
+                  <input id="email_text" type="text" class="form-control" required value='Testing'>
+                    <label for="email_text">Text</label>
+                  </div>
+                <div class="input-field col s4">
+                  <input id="email_submit" value='Send Email' type="submit" class="btn btn-info">
+                  </div>
+          </div>
+        </div>        
       </div>
     </form>
         <div class="btn btn-success netConnect"
@@ -169,6 +183,11 @@
 
 </body>
 <script>
+  function htmlPreview(){
+    let item = document.getElementById('htmltext').value;
+    console.log(item);
+    ipcRenderer.send('htmlpreview', item);
+  }
   function resetEverything(){
     document.querySelector('#excel-div').classList.add("d-none");
     document.querySelector('#buttons').classList.add("d-none");

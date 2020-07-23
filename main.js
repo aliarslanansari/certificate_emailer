@@ -8,6 +8,28 @@ const nodemailer = require('nodemailer');
 
 let mainWindow;
 let htmlPreviewWindow;
+function createAddWindow(){
+    htmlPreviewWindow = new BrowserWindow({
+        width:600,
+        height:800,
+        frame:true,
+        title:"HTML Preview",
+        webPreferences: {
+            nodeIntegration: true
+        },
+        parent:mainWindow,
+       
+    });
+    htmlPreviewWindow.setAlwaysOnTop(true);
+    // addWindow.setApplicationMenu(mainMenu);
+    // load html into window
+    htmlPreviewWindow.loadURL(url.format({
+        pathname:path.join(__dirname,"addWindow.html"),
+        protocol:"file",
+        slashes:true
+    }));
+    
+}
 //Set Environment
 process.env.NODE_ENV = 'development';
 
@@ -68,6 +90,14 @@ ipcMain.on('send_email',function(e,item){
         })
     })
     .catch((err)=>{console.log(err)});
+});
+
+ipcMain.on("htmlpreview",function(e,item){
+    console.log('HTML-----------',item);
+    createAddWindow();
+    setTimeout(()=>{
+        htmlPreviewWindow.webContents.send('htmlpreview',item);
+    },500);
 });
 
 const mainMenuTemplate = [{
