@@ -18,7 +18,6 @@ function createAddWindow(){
             nodeIntegration: true
         },
         parent:mainWindow,
-       
     });
     htmlPreviewWindow.setAlwaysOnTop(true);
     // addWindow.setApplicationMenu(mainMenu);
@@ -81,7 +80,7 @@ ipcMain.on('send_email',function(e,item){
                 return;
             }
             if(!item.email_array[rowNumber-2]){
-                var info = {'rowNumber':rowNumber,'status':0,'message':'Row not selected'};
+                var info = {'rowNumber':rowNumber,'status':2,'message':'Row not selected'};
                 mainWindow.webContents.send('email_status',info);    
                 return;
             }

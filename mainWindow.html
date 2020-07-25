@@ -183,6 +183,7 @@
 
 </body>
 <script>
+  const excel_file_path = null;
   function htmlPreview(){
     let item = document.getElementById('htmltext').value;
     console.log(item);
@@ -212,20 +213,17 @@
   var rowCount = 0;
   var rowCount1 = 0;
   var rowValHeader = [];
-    setInterval(()=>{
-        isOnline();
+  setInterval(()=>{
+    checkButton = document.getElementById('netCheck');
+    fetch('https://ali-arslan-ansari.000webhostapp.com/checknet.php')
+    .then(data => {
+        checkButton.innerText = "Internet Connected";
+        checkButton.classList.remove("netConnect");
+     }).catch(error => {
+        checkButton.innerText = "Internet Disconnected";
+        checkButton.classList.add("netConnect");
+      });
     },3500);
-    function isOnline() { 
-      checkButton = document.getElementById('netCheck');
-      fetch('https://ali-arslan-ansari.000webhostapp.com/checknet.php')
-      .then(data => {
-          checkButton.innerText = "Internet Connected";
-          checkButton.classList.remove("netConnect");
-       }).catch(error => {
-          checkButton.innerText = "Internet Disconnected";
-          checkButton.classList.add("netConnect");
-        });
-    }
 </script>
 <script>
   const { ipcRenderer } = require('electron');
@@ -259,7 +257,7 @@
         subject:subject.value,
         email_array: res,
         text:text.value,  
-        excel_path:document.querySelector('#excel_file').files[0].path,
+        excel_path:excel_file_path,
         emailHeader: document.getElementById('email_column_sel').value,
         htmltext: document.getElementById('htmltext').value
       }
