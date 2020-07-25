@@ -9,12 +9,12 @@ var workbook = new Excel.Workbook();
         var filesel = document.querySelector('#excel_file').files[0];
         if(filesel){
             document.getElementById('email_column_sel').disabled = false;
+            document.getElementById('placeholdercol').disabled = false;
             table.innerHTML = '';
             excel_file_path = document.querySelector('#excel_file').files[0].path;
-            console.log(item);
             document.querySelector('#excel-div').classList.remove("d-none")
             document.querySelector('#buttons').classList.remove("d-none")
-            workbook.xlsx.readFile(item)
+            workbook.xlsx.readFile(excel_file_path)
             .then(function() {
                 var ws = workbook.getWorksheet(1);
                 var cell = ws.getCell('A1').value;
@@ -27,11 +27,14 @@ var workbook = new Excel.Workbook();
                     if(rowNumber==1){
                         var tr_con = "<td style='font-weight:bold; position:sticky;top:0;background-color:#f2f5fa;'>Sr. no</td>";
                         var sel1 = document.getElementById('email_column_sel');
+                        var sel2 = document.getElementById('placeholdercol');
                             sel1.innerHTML = '';
+                            sel2.innerHTML = '';
                         RowArray.forEach((item,index)=>{
                             tr_con += "<td style='font-weight:bold; position:sticky;top:0;background-color:#f2f5fa;'>"+item+"</td>";
                             rowValHeader.push({'text':item, 'value':index});
                             sel1.appendChild(new Option(item,index));
+                            sel2.appendChild(new Option(item,item));
                         })
                         tr_con += "<td style='font-weight:bold; position:sticky;top:0;z-index:2;right:0;background-color:#f2f5fa;'>Select</td>";
                     }else{
@@ -51,11 +54,8 @@ var workbook = new Excel.Workbook();
                     tr.setAttribute("name", "rows[]"); 
                     table.appendChild(tr);
                 });
-                document.addEventListener('DOMContentLoaded', function() {
-                    var elems = document.querySelectorAll('email_column_sel');
-                    var instances = M.FormSelect.init(elems,rowValHeader);
-                });  
             });
+            console.log(rowValHeader);
         }
         else{
             console.log("FILE NOT SELECTED--------")
@@ -134,3 +134,7 @@ var workbook = new Excel.Workbook();
     
     // loadingSpinner(true);
     //setTimeout(loadingSpinner,1000,false);
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     var elems = document.querySelectorAll('email_column_sel');
+    //     var instances = M.FormSelect.init(elems,rowValHeader);
+    // });  
