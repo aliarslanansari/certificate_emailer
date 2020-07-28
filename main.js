@@ -74,9 +74,10 @@ ipcMain.on('send_email',function(e,item){
         ws = workbook.getWorksheet('Sheet1');
         var cell = ws.getCell('A1').value;
         //console.log(cell);
+        var rowHeader;
         ws.eachRow(function(row, rowNumber) {
-            console.log(item.email_array[rowNumber-2]);
             if(rowNumber==1){
+                rowHeader = row.values;
                 return;
             }
             if(!item.email_array[rowNumber-2]){
@@ -84,8 +85,8 @@ ipcMain.on('send_email',function(e,item){
                 mainWindow.webContents.send('email_status',info);    
                 return;
             }
-            console.log(row.values[item.emailHeader]);
-            sendEmail(item.host, item.port, item.email, item.pass, item.subject,row.values[item.emailHeader],item.text,item.htmltext,rowNumber);
+            var HTMLText = replacePlaceholder(rowHeader,item.htmltext,row.values);
+            sendEmail(item.host, item.port, item.email, item.pass, item.subject,row.values[item.emailHeader],item.text,HTMLText,rowNumber);
         })
     })
     .catch((err)=>{console.log(err)});
@@ -98,6 +99,19 @@ ipcMain.on("htmlpreview",function(e,item){
         htmlPreviewWindow.webContents.send('htmlpreview',item);
     },500);
 });
+
+function replaceAll(str, term, replacement) {
+    return 
+}
+function escapeRegex(string) {
+    return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+function replacePlaceholder(row_header,html_text,row_values){
+    for(let i = 1;i<=row_header.length;i++){
+        html_text = html_text.replace(new RegExp(escapeRegex("{{"+row_header[i]+"}}"), 'g'),row_values[i]);
+    }
+    return html_text;
+}
 
 const mainMenuTemplate = [{
     label:'File',

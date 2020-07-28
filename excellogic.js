@@ -8,14 +8,15 @@ var workbook = new Excel.Workbook();
         e.preventDefault();
         var filesel = document.querySelector('#excel_file').files[0];
         if(filesel){
+            excel_file_path = document.querySelector('#excel_file').files[0].path;
+            workbook.xlsx.readFile(excel_file_path)
+            .then(function() {
+            document.getElementById('excelerrmsg').innerHTML = "";
+            document.querySelector('#excel-div').classList.remove("d-none");
+            document.querySelector('#buttons').classList.remove("d-none");
             document.getElementById('email_column_sel').disabled = false;
             document.getElementById('placeholdercol').disabled = false;
             table.innerHTML = '';
-            excel_file_path = document.querySelector('#excel_file').files[0].path;
-            document.querySelector('#excel-div').classList.remove("d-none")
-            document.querySelector('#buttons').classList.remove("d-none")
-            workbook.xlsx.readFile(excel_file_path)
-            .then(function() {
                 var ws = workbook.getWorksheet(1);
                 var cell = ws.getCell('A1').value;
                 console.log(cell);
@@ -54,11 +55,14 @@ var workbook = new Excel.Workbook();
                     tr.setAttribute("name", "rows[]"); 
                     table.appendChild(tr);
                 });
+            })
+            .catch((error)=>{
+                console.log("Unable to read file");
+                document.getElementById('excelerrmsg').innerHTML = "Unable to load the file!"
             });
-            console.log(rowValHeader);
         }
         else{
-            console.log("FILE NOT SELECTED--------")
+            // 
         }
     }
 
