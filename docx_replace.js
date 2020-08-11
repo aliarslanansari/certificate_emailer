@@ -14,7 +14,7 @@ function replaceErrors(key, value) {
     }
     return value;
 }
-
+//Error Handler
 function errorHandler(error) {
     console.log(JSON.stringify({error: error}, replaceErrors));
 
