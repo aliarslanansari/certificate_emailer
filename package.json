@@ -15,7 +15,7 @@
   "dependencies": {
     "custom-electron-titlebar": "^3.2.2-hotfix62",
     "docxtemplater": "^3.17.9",
-    "electron": "^8.3.0",
+    "electron": "^9.4.0",
     "electron-reload": "^1.5.0",
     "exceljs": "^4.1.0",
     "nodemailer": "^6.4.10",
